@@ -1,0 +1,12 @@
+{
+    "name": "merge"
+    },
+    "files": [
+        "merge.ts"
+    ],
+    "public" : true,
+    "targetVersions": {
+        "target": "0.0.1",
+        "pxt": "100.0.0"
+    }
+}
