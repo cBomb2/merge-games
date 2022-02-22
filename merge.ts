@@ -1,0 +1,76 @@
+//%icon="\uf248" color="D548FF"
+namespace merge{
+    //% block
+    export function createCursor(){
+        let cursor = sprites.create(img`
+        ................
+        .f..............
+        .ff.............
+        .f1f............
+        .f11f...........
+        .f111f..........
+        .f1111f.........
+        .f11111f........
+        .f111111f.......
+        .f1111111f......
+        .f11111111f.....
+        .f111111111f....
+        .f1111111111f...
+        .f111111ffffff..
+        .f111f11f.......
+        .f11ff11f.......
+        .f1f..f11f......
+        .ff...f11f......
+        .f.....f11f.....
+        .......f11f.....
+        ........f11f....
+        ........f11f....
+        .........ff.....
+        ................
+        `)
+        let holding = false
+        let spriteHolding: Sprite = null
+        let NEW: Sprite = null
+        scene.cameraFollowSprite(cursor)
+        grid.snap(cursor)
+        grid.moveWithButtons(cursor)
+    }
+    //% block="new mergable dot of size $size at x $posX, y $posY" blockSetVariable="myDot"
+    export function createMergableDot(size: number, posX?: number, posY?: number){
+        let dot = sprites.create(img`
+            . . . . . 6 6 6 6 6 6 . . . . .
+            . . . . 6 6 6 6 6 6 6 6 . . . .
+            . . . 6 6 6 6 6 6 6 6 6 6 . . .
+            . . 6 6 6 6 6 6 6 6 6 6 6 6 . .
+            . 6 6 6 6 6 6 6 6 6 6 6 6 6 6 .
+            6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
+            6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
+            6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
+            6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
+            6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
+            6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
+            . 6 6 6 6 6 6 6 6 6 6 6 6 6 6 .
+            . . 6 6 6 6 6 6 6 6 6 6 6 6 . .
+            . . . 6 6 6 6 6 6 6 6 6 6 . . .
+            . . . . 6 6 6 6 6 6 6 6 . . . .
+            . . . . . 6 6 6 6 6 6 . . . . .
+        `, SpriteKind.Food)
+        grid.snap(dot)
+        grid.place(dot, tiles.getTileLocation(posX, posY))
+        let textSprite = textsprite.create(size.toString())
+        textSprite.setPosition(dot.x, dot.y)
+        sprites.setDataNumber(dot, "number", size)
+        sprites.setDataSprite(dot, "textSprite", textSprite)
+        return dot
+    }
+    //%block="merge $sprite1=variables_get(myDot) and $sprite2=variables_get(myDot2)"
+    export function merge(sprite1: Sprite, sprite2: Sprite){
+        if(sprites.readDataNumber(sprite1, "number") == sprites.readDataNumber(sprite2, "number")){
+            sprite1 = createMergableDot(sprites.readDataNumber(sprite1, "number") + 1, grid.spriteCol(sprite1), grid.spriteRow(sprite1))
+            sprites.setDataNumber(sprite1, "number", sprites.readDataNumber(sprite1, "number") + 1)
+            sprite2.destroy(); sprites.readDataSprite(sprite2, "textSprite").destroy()
+        }else{
+            console.warn("tried to merge "+sprites.readDataNumber(sprite1, "number")+" and "+sprites.readDataNumber(sprite2,"number"))
+        }
+    }
+}
